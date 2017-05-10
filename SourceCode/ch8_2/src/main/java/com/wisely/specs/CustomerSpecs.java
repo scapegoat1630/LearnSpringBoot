@@ -29,11 +29,12 @@ public class CustomerSpecs {
 
 			@Override
 			public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				List<Predicate> predicates = new ArrayList<>(); //3
-				
-				EntityType<T> entity = entityManager.getMetamodel().entity(type);//4
-				
-				for (Attribute<T, ?> attr : entity.getDeclaredAttributes()) {//5
+
+				List<Predicate> predicates = new ArrayList<>(); //3  存储构造的查询条件
+				//4 获取实体类的entityType ，可以通过entityType获取实体类的属性
+				EntityType<T> entity = entityManager.getMetamodel().entity(type);
+				//5 获取对象的所有属性
+				for (Attribute<T, ?> attr : entity.getDeclaredAttributes()) {
 					Object attrValue = getValue(example, attr); //6
 					if (attrValue != null) {
 						if (attr.getJavaType() == String.class) { //7
@@ -48,6 +49,7 @@ public class CustomerSpecs {
 					}
 
 				}
+				//11将条件列表转换为Predicate
 				return predicates.isEmpty() ? cb.conjunction() : cb.and(toArray(predicates, Predicate.class));//11
 			}
 
